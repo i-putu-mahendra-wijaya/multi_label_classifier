@@ -1,0 +1,36 @@
+# IDE
+.idea
+.cadence
+
+# Git
+.git
+
+# Dependencies
+**/node_modules/
+**/.pnp
+**/.pnp.js
+
+# Credentials
+**/credentials/**/*.json
+**/cred/**/*.json
+keys/
+
+# Env
+venv/env/*
+**/.env*
+
+# Output
+**/coverage/
+**/build/
+**/logs/
+**/*.log*
+**/*.egg-info
+**/nohup.out
+
+# Misc
+.DS_Store
+ingestion/odoo_v2/*.yaml
+**/*.swp
+*.pyc
+**/__pycache__/
+**/venv_*/

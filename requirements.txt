@@ -1,0 +1,18 @@
+# --- Core Deep Learning Framework ---
+# Includes Keras 3.0+ by default in 2.16+
+tensorflow==2.16.1 
+
+# --- Google Cloud & Vertex AI (Needed for you to submit jobs) ---
+google-cloud-aiplatform>=1.40.0
+google-cloud-storage>=2.10.0
+
+# --- Data Science & Visualization (Standard student tools) ---
+pandas>=2.0.0
+numpy>=1.23.5
+matplotlib>=3.7.0
+scikit-learn>=1.3.0
+
+# --- Portability Helpers ---
+# Helpful for students to download datasets or trainer code
+requests
+tqdm
