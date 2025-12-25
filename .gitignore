@@ -18,6 +18,7 @@ keys/
 # Env
 venv/env/*
 **/.env*
+config.yaml
 
 # Output
 **/coverage/
