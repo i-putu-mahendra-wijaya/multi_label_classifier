@@ -20,6 +20,7 @@ class CredentialAccessor:
             _json_string: str = kjf.read()
             self.kaggle_json: Dict = json.loads(_json_string)
 
-        with open(self.kaggle_api_token_path, "r") as katf:
-            _json_string: str = katf.read()
-            self.kaggle_api_token: Dict = json.loads(_json_string)
+        if kaggle_api_token_path is not None:
+            with open(self.kaggle_api_token_path, "r") as katf:
+                _json_string: str = katf.read()
+                self.kaggle_api_token: Dict = json.loads(_json_string)
