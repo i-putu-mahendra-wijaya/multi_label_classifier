@@ -1,4 +1,4 @@
-from typing import Union, Dict
+from typing import Union, Dict, Optional
 
 from pathlib import Path
 import os
@@ -11,10 +11,10 @@ class ImageDownloader:
 
     def __init__(
             self,
-            kaggle_credential_accessor: CredentialAccessor,
+            kaggle_credential_accessor: Optional[CredentialAccessor] = None,
     ) -> None:
 
-        self.credential_accessor: CredentialAccessor = kaggle_credential_accessor
+        self.credential_accessor: Optional[CredentialAccessor] = kaggle_credential_accessor
 
 
     def download_image(
@@ -27,8 +27,12 @@ class ImageDownloader:
         output_dir_path: Path = Path(output_dir)
         output_dir_path.mkdir(parents=True, exist_ok=True)
 
-        if self.credential_accessor.kaggle_json_path.exists():
-            # Check if environment already have kaggle.json
+        if (
+                self.credential_accessor is not None
+                and
+                self.credential_accessor.kaggle_json_path.exists()
+        ):
+            # Check if environment already have kaggle.json.swp
             os.environ["KAGGLE_CONFIG_DIR"] = str(self.credential_accessor.kaggle_json_path.parent)
 
             kaggle_json_dict: Dict = self.credential_accessor.kaggle_json
@@ -39,7 +43,7 @@ class ImageDownloader:
             import kagglehub
 
         else:
-            # if no kaggle.json is found, then ask user to login to their kaggle account
+            # if no kaggle.json.swp is found, then ask user to login to their kaggle account
             import kagglehub
 
             kagglehub.auth.login()
