@@ -3,6 +3,8 @@ from typing import Union, Dict, Optional
 from pathlib import Path
 import os
 
+import kagglehub
+
 from .CredentialAccessor import CredentialAccessor
 from ..utils import create_symlink
 
@@ -27,25 +29,23 @@ class ImageDownloader:
         output_dir_path: Path = Path(output_dir)
         output_dir_path.mkdir(parents=True, exist_ok=True)
 
-        if (
+        if kagglehub.auth.get_username() is not None:
+            # Kaggle already authenticated, no need to login anymore
+            pass
+
+        elif (
                 self.credential_accessor is not None
                 and
                 self.credential_accessor.kaggle_json_path.exists()
         ):
-            # Check if environment already have kaggle.json.swp
+            # Check if environment already have kaggle.json
             os.environ["KAGGLE_CONFIG_DIR"] = str(self.credential_accessor.kaggle_json_path.parent)
-
             kaggle_json_dict: Dict = self.credential_accessor.kaggle_json
-
             os.environ["KAGGLE_USERNAME"] = kaggle_json_dict["username"]
             os.environ["KAGGLE_KEY"] = kaggle_json_dict["key"]
 
-            import kagglehub
-
         else:
-            # if no kaggle.json.swp is found, then ask user to login to their kaggle account
-            import kagglehub
-
+            # if no kaggle.json is found, then ask user to login to their kaggle account
             kagglehub.auth.login()
 
         _downloaded_dataset_path: str = kagglehub.dataset_download(

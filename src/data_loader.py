@@ -13,7 +13,7 @@ CUR_DIRECTORY: Path = Path(__file__).parent
 ROOT_DIRECTORY: Path = CUR_DIRECTORY.parent
 DATASET_DIRECTORY: Path = ROOT_DIRECTORY / "datasets"
 GCP_SERVICE_ACCOUNT_PATH: Path = ROOT_DIRECTORY / "credentials" / "gcp" / "service_account.json"
-KAGGLE_JSON_PATH: Path = ROOT_DIRECTORY / "kaggle" / "kaggle.json.swp"
+KAGGLE_JSON_PATH: Path = ROOT_DIRECTORY / "kaggle" / "kaggle.json"
 
 
 def authenticate(
