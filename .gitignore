@@ -8,6 +8,10 @@
 # Dataset
 datasets/*
 
+# Saved Models
+deploy/saved_models/*.keras
+deploy/saved_models/*.h5
+
 # Dependencies
 **/node_modules/
 **/.pnp

@@ -1,6 +1,10 @@
+from typing import Protocol, Any, Tuple, Any, runtime_checkable
 from pathlib import Path
 import os
 import shutil
+
+import numpy as np
+import tensorflow as tf
 
 def create_symlink(
         source: Path,
@@ -39,3 +43,58 @@ def create_symlink(
     )
 
     return link_path
+
+
+"""
+Herein below are definitions of the Protocols used in this model. 
+We are going to use `interface-driven design` as far as possible in this project
+"""
+
+@runtime_checkable
+class DeepLearningModel(Protocol):
+
+    def fit(
+            self,
+            x: Any,
+            y: Any,
+            validation_data: Tuple,
+            epochs: int,
+            batch_size: int,
+            **kwargs,
+    ) -> Any:
+        ...
+
+    def save(
+            self,
+            filepath: str
+    ) -> None:
+        ...
+
+    def evaluate(
+            self,
+            x: Any,
+            y: Any,
+            batch_size: int,
+    ) -> Tuple[float, float]:
+        ...
+
+    def summary(
+            self
+    ) -> None:
+        ...
+
+    def predict(
+            self,
+            x: Any
+    ) -> np.ndarray:
+        ...
+
+
+@runtime_checkable
+class DataLoader(Protocol):
+
+    def load_and_split(
+            self,
+            seed: int,
+    ) -> Tuple: # Returns X_train, X_val, X_test, y_train, y_val, y_test, mlb_classes
+        ...
