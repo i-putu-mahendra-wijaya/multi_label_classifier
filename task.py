@@ -1,7 +1,15 @@
 import os
+import sys
 import argparse
 from argparse import Namespace
 from pathlib import Path
+
+curr_dir: Path = Path(__file__).parent.resolve()
+src_path: Path = curr_dir / "src"
+
+if src_path not in sys.path:
+    sys.path.insert(0, str(src_path.resolve()))
+
 from src import utils, model, data_loader
 
 
@@ -19,6 +27,9 @@ def main():
     # 1. Define the Model Directory
     model_dir: str = os.getenv("AIP_MODEL_DIR", "deploy/saved_models")
 
+    if not model_dir.startswith("gs://"):
+        os.makedirs(model_dir, exist_ok=True)
+
     # 2. Load Data via Protocol
     loader: utils.DataLoader = data_loader.get_loader(
         base_path=args.data_path,
@@ -33,6 +44,8 @@ def main():
         depth=3,
         classes=len(classes),
     )
+
+    cnn_model.summary()
 
     # 4. Train
     cnn_model.fit(
