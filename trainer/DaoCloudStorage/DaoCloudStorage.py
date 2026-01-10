@@ -277,6 +277,90 @@ class DaoCloudStorage:
             return None
 
 
+    def upload_local_folder(
+            self,
+            gcs_bucket_name: str,
+            local_folder_path: Union[str, Path] = ".",
+            gcs_folder_prefix: str = "",
+    ) -> None:
+
+        """
+        Recursively upload a local folder and its contents to a GCS bucket.
+
+        This method walks through the specified local directory and uploads
+        **all files** found (recursively) to the target GCS bucket while
+        preserving the relative directory structure. Subdirectories are
+        implicitly created in GCS through object naming.
+
+        Each local file's relative path (with respect to ``local_folder_path``)
+        is appended to the provided ``gcs_folder_prefix`` to construct the
+        destination object path in GCS.
+
+        Bucket existence is validated implicitly through
+        :meth:`upload_blob_from_file`, which will attempt to create the bucket
+        if it does not already exist.
+
+        Parameters
+        ----------
+        gcs_bucket_name : str
+            Name of the destination GCS bucket.
+        local_folder_path : str or :class:`pathlib.Path`, optional
+            Path to the local folder whose contents should be uploaded.
+            Defaults to the current working directory (``"."``).
+        gcs_folder_prefix : str, optional
+            Prefix (folder path) within the GCS bucket under which all files
+            will be uploaded. This is prepended to each file's relative path.
+            Defaults to an empty string, uploading files to the bucket root.
+
+        Returns
+        -------
+        None
+            This method does not return a value. Upload failures for individual
+            files are handled internally and logged via standard output.
+
+        Notes
+        -----
+        - Only files are uploaded; directories themselves are skipped.
+        - File uploads are performed one-by-one using
+          :meth:`upload_blob_from_file`.
+        - Existing objects with the same path in GCS will be overwritten.
+        - The operation is **not atomic**: partial uploads may occur if an
+          error happens mid-process.
+
+        Examples
+        --------
+        Upload an entire local directory to a GCS folder:
+
+        >>> dao.upload_local_folder(
+        ...     gcs_bucket_name="my-data-bucket",
+        ...     local_folder_path="/tmp/datasets",
+        ...     gcs_folder_prefix="raw/datasets"
+        ... )
+
+        This will result in objects such as:
+
+        - raw/datasets/file1.csv
+        - raw/datasets/images/img_001.png
+        """
+
+        _local_folder_path: Path = Path(local_folder_path) if isinstance(local_folder_path, str) else local_folder_path
+
+        for each_file in _local_folder_path.rglob("*"):
+            if each_file.is_file():
+                # Create destination path in GCS
+                relative_path: Path = each_file.relative_to(_local_folder_path)
+
+                # Combine gcs_prefix with the relative path
+                remote_path: Path = Path(gcs_folder_prefix) / relative_path
+
+                print(f"Uploading file `{each_file}` to `{remote_path}` in bucket `{gcs_bucket_name}`...")
+                self.upload_blob_from_file(
+                    bucket_name=gcs_bucket_name,
+                    object_name=str(remote_path),
+                    file_path=each_file
+                )
+
+
     def download_blob_to_file(
             self,
             bucket_name: str,
